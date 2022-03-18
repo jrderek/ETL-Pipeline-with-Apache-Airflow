@@ -8,10 +8,10 @@ Datasets
 
 The following data was used in this project & was provided by udacity.
 
-I94 Immigration Data: This data comes from the US National Tourism and Trade Office. This is where the data comes from.
-World Temperature Data: This dataset came from Kaggle. You can read more about it here.
-U.S. City Demographic Data: This data comes from OpenSoft. You can read more about it here.
-Airport Code Table: This is a simple table of airport codes and corresponding cities. It comes from here.
+I94 Immigration Data: This data comes from the US National Tourism and Trade Office. https://travel.trade.gov/research/reports/i94/historical/2016.html is where the data comes from.
+World Temperature Data: This dataset came from Kaggle. You can read more about it https://www.kaggle.com/berkeleyearth/climate-change-earth-surface-temperature-data
+U.S. City Demographic Data: This data comes from OpenSoft. You can read more about it https://public.opendatasoft.com/explore/dataset/us-cities-demographics/export/.
+Airport Code Table: This is a simple table of airport codes and corresponding cities. It comes from https://datahub.io/core/airport-codes#data.
 
 Architecture / Technologies
 In order to provide a star schema like data-model out of the above stated raw data a clean architecture which accounts for all necessary data-engineering tasks needed had to be created. After an assessment of technologies & requirements, the final architecture was designed as depicted below.
