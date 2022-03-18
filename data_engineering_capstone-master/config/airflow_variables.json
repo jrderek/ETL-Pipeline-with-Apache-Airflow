@@ -1,0 +1,30 @@
+{
+        "aws_emr_cluster_config": {
+            "cluster_name": "uda-nd-cap",
+            "release_label": "emr-5.29.0",
+            "master_instance_type": "m4.xlarge",
+            "slave_node_instance_type": "m4.2xlarge",
+            "num_slave_nodes": 2,
+            "ec2_key_name": "your-key-name",
+            "region": "eu-central-1",
+            "bootstrap": {"name": "bootstrap_emr",
+                          "path":  "s3://your-bucket-name/capstone/scripts/bootstrap/bootstrap_emr.sh"}
+        },
+        "aws_redshift_cluster_config": {
+            "cluster_identifier": "uda-nd-cap",
+            "cluster_type": "multi-node",
+            "node_type": "dc2.large",
+            "num_nodes": 4,
+            "region": "eu-central-1"
+        },
+        "aws_s3_spark_config": {
+            "spark_jobs":"/home/hadoop/python",
+            "s3_bucket_name": "your-bucket-name",
+            "s3_ingest": "s3://your-bucket-name/capstone/data/ingest",
+            "s3_raw": "s3://your-bucket-name/capstone/data/raw",
+            "s3_processed": "s3://your-bucket-name/capstone/data/processed",
+            "s3_tmp": "s3a://your-bucket-name/capstone/data/tmp",
+            "s3_res": "s3://your-bucket-name/capstone/resources",
+            "region": "eu-central-1"
+        }
+}

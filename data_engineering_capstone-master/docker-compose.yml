@@ -1,0 +1,116 @@
+version: "3"
+services:
+  airflow_db:
+    image: "postgres:9.6"
+    container_name: "airflow_db"
+    environment:
+      - POSTGRES_USER=airflow
+      - POSTGRES_PASSWORD=airflow
+      - POSTGRES_DB=airflow
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+    networks:
+      airflow:
+        aliases:
+          - airflow_db
+  
+
+  airflow_initdb:
+    image: "airflow-base"
+    container_name: "airflow_initdb"
+    networks:
+      airflow:
+        aliases:
+          - airflow_initdb
+    command: initdb
+    environment:
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
+      - AWS_S3_BUCKET=${AWS_S3_BUCKET}
+      - AWS_EMR_SSH_USER=${AWS_EMR_SSH_USER}
+      - AWS_EMR_SSH_PW=${AWS_EMR_SSH_PW}
+      - AWS_SSH_KEY_FILE=${AWS_SSH_KEY_FILE}
+      - AWS_REDSHIFT_USER=${AWS_REDSHIFT_USER}
+      - AWS_REDSHIFT_PW=${AWS_REDSHIFT_PW}
+      - AWS_REDSHIFT_SCHEMA=${AWS_REDSHIFT_SCHEMA}
+    depends_on:
+      - airflow_db
+
+
+  airflow_webserver:
+    image: "airflow-base"
+    container_name: "airflow_webserver"
+    restart: always
+    depends_on:
+      - airflow_db
+      - airflow_initdb
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/plugins:/opt/airflow/plugins
+      - ./airflow/logs:/opt/airflow/logs
+    networks:
+      airflow:
+        aliases:
+          - airflow_webserver
+    ports:
+      - "8282:8080"
+    command: webserver
+    environment:
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
+      - AWS_S3_BUCKET=${AWS_S3_BUCKET}
+      - AWS_EMR_SSH_USER=${AWS_EMR_SSH_USER}
+      - AWS_EMR_SSH_PW=${AWS_EMR_SSH_PW}
+      - AWS_SSH_KEY_FILE=${AWS_SSH_KEY_FILE}
+      - AWS_REDSHIFT_USER=${AWS_REDSHIFT_USER}
+      - AWS_REDSHIFT_PW=${AWS_REDSHIFT_PW}
+      - AWS_REDSHIFT_SCHEMA=${AWS_REDSHIFT_SCHEMA}
+    healthcheck:
+      test: ["CMD-SHELL", "[ -f /opt/airflow/airflow-webserver.pid ]"]
+      interval: 30s
+      timeout: 30s
+      retries: 3
+
+
+  airflow_scheduler:
+    image: "airflow-base"
+    container_name: "airflow_scheduler"
+    restart: always
+    depends_on:
+      - airflow_db
+      - airflow_initdb
+      - airflow_webserver
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/plugins:/opt/airflow/plugins
+      - ./airflow/logs:/opt/airflow/logs
+    networks:
+      airflow:
+        aliases:
+          - airflow_scheduler
+    command: scheduler
+    environment:
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
+      - AWS_S3_BUCKET=${AWS_S3_BUCKET}
+      - AWS_EMR_SSH_USER=${AWS_EMR_SSH_USER}
+      - AWS_EMR_SSH_PW=${AWS_EMR_SSH_PW}
+      - AWS_SSH_KEY_FILE=${AWS_SSH_KEY_FILE}
+      - AWS_REDSHIFT_USER=${AWS_REDSHIFT_USER}
+      - AWS_REDSHIFT_PW=${AWS_REDSHIFT_PW}
+      - AWS_REDSHIFT_SCHEMA=${AWS_REDSHIFT_SCHEMA}
+    healthcheck:
+      test: ["CMD-SHELL", "[ -f /opt/airflow/airflow-scheduler.pid ]"]
+      interval: 30s
+      timeout: 30s
+      retries: 3
+
+
+networks:
+  airflow:
+    driver: bridge
