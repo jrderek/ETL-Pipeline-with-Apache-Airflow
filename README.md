@@ -6,11 +6,14 @@ The capstone project is the final project to complete the nanodegree-program and
 
 Datasets
 
-The following data was used in this project & was provided by udacity.
+The following data was used in this project.
 
 I94 Immigration Data: This data comes from the US National Tourism and Trade Office. https://travel.trade.gov/research/reports/i94/historical/2016.html is where the data comes from.
+
 World Temperature Data: This dataset came from Kaggle. You can read more about it https://www.kaggle.com/berkeleyearth/climate-change-earth-surface-temperature-data
+
 U.S. City Demographic Data: This data comes from OpenSoft. You can read more about it https://public.opendatasoft.com/explore/dataset/us-cities-demographics/export/.
+
 Airport Code Table: This is a simple table of airport codes and corresponding cities. It comes from https://datahub.io/core/airport-codes#data.
 
 Architecture / Technologies
@@ -35,6 +38,7 @@ Airflow-Pipelines
 Airflow is running in a custom docker setup where each Airflow-Webserver, Airflow-Scheduler & Airflow-Database (postgres) is running in its own docker-container. Initially we also run an Airflow-initdb container to initialize the database. For more info on how to get this running see the Getting Started section.
 
 01_provision_cluster_dag
+
 This dag is responsible to provision both AWS-Redshift as well as AWS-EMR cluster used to run the workloads and create the data-model. After all tasks are finished the clusters are terminated to not exceed AWS-Budget. 
 
 ![image](https://user-images.githubusercontent.com/96236642/159076539-7243b9fa-cd99-4121-b8bd-a0d6e77e1472.png)
@@ -58,6 +62,7 @@ A tmp-directory on AWS-S3 is cleaned up by a custom operator
 Screenshot
 
 03_data_quality_check_dag
+
 This dag is responsible for assuring data quality of the data residing in the tables of the created data-warehouse. Data quality checks are defined prior to execution and results are compared to an expected result. 
 
 ![image](https://user-images.githubusercontent.com/96236642/159076635-f7c2d8f9-2102-4bdb-904e-466320bac04a.png)
@@ -70,6 +75,7 @@ Data Model
 The project aims to provide an AWS-Redshift data-warehouse with staging tables containing all the data provided for the project by udacity. The following star schema consists of the fact-table fact_immigration and the dimension tables dim_date, dim_state, dim_country, dim_airport, dim_port, dim_travel_mode and dim_visa_type. These tables are a aggregated and combined view of the raw data in the staging tables.
 
 Fact Immigration
+
 This table is created out of a combination of the staging_immigration table / data and the provided dictionaries / static-dimensions i94_states.txt, i94_city_res.txt, dim_travel_mode, dim_port & dim_visa_type.
 
 Table Column	Data Type	Description
@@ -98,6 +104,7 @@ visa_type	varchar	type of visa used
 
 
 Dimension State
+
 This table is created out of a combination of the staging_demographic table / data and the provided dictionaries / static-dimensions i94_states.txt.
 
 Table Column	Data Type	Description
