@@ -1,6 +1,6 @@
 # ETL-Pipeline-with-Apache-Airflow
 
-The purpose of the data engineering project is to combine the skills & expertise acquired during the nanodegree-program to accomplish data-engineering tasks such as developing ETL-pipelines with Apache Airflow, handling complex and huge amounts of data with Apache Spark / AWS-EMR, defining efficient star-schema like data-models in AWS-Redshift and utilizing HDFS like storage as AWS-S3. 
+The purpose of the data engineering project is to combine the skills & expertise acquired to accomplish data-engineering tasks such as developing ETL-pipelines with Apache Airflow, handling complex and huge amounts of data with Apache Spark / AWS-EMR, defining efficient star-schema like data-models in AWS-Redshift and utilizing HDFS like storage as AWS-S3. 
 
 The capstone project is the final project to complete the nanodegree-program and deals with four datasets. The main dataset will include data on immigration to the United States, and supplementary datasets will include data on airport codes, U.S. city demographics, and temperature data. The datasets will be ingested and transformed during various steps of a holistic ETL-Pipeline using Apache Airflow, Spark, AWS-S3, AWS-EMR & AWS-Redshift ending up in a final star-schema like data-model which enables to answer analytical questions regarding immigration in the US.
 
@@ -14,6 +14,7 @@ U.S. City Demographic Data: This data comes from OpenSoft. You can read more abo
 Airport Code Table: This is a simple table of airport codes and corresponding cities. It comes from https://datahub.io/core/airport-codes#data.
 
 Architecture / Technologies
+
 In order to provide a star schema like data-model out of the above stated raw data a clean architecture which accounts for all necessary data-engineering tasks needed had to be created. After an assessment of technologies & requirements, the final architecture was designed as depicted below.
 
 ![image](https://user-images.githubusercontent.com/96236642/159076484-725a711e-03b4-425e-92bc-7cb02f4fe517.png)
@@ -30,6 +31,7 @@ AWS-S3 will serve as a HDFS like file storage allowing to store huge amounts of 
 Data processing including all transformations and ETL tasks is done via Apache Spark. Spark allows for parallel processing of huge amounts of data and provides various capabilities and flexibility when it comes to wrangle big data. In a first step the raw data is ingested into separate staging tables residing as parquet files and Hive tables on S3 and EMR respectively. This step includes basic data clean-up and data-type conversions. The second step creates the first (static) dimension tables of the final star-schema out of provided data mappings. Again, these are stored as parquet files (S3) and Hive tables (EMR) as well as a final dimension table on AWS-Redshift as these tables are utilized for creating further fact- and dimension-tables to complete the star-schema in Redshift. The complete architecture and it's components are fully managed & orchestrated by Airflow-Pipelines running in it's own docker environment. The docker setup is also part of this project and provides a production-ready Airflow setup by also interacting with AWS-S3 as storage for Spark-Jobs and other configuration files that are necessary to provision clusters on AWS.
 
 Airflow-Pipelines
+
 Airflow is running in a custom docker setup where each Airflow-Webserver, Airflow-Scheduler & Airflow-Database (postgres) is running in its own docker-container. Initially we also run an Airflow-initdb container to initialize the database. For more info on how to get this running see the Getting Started section.
 
 01_provision_cluster_dag
@@ -41,6 +43,7 @@ This dag is responsible to provision both AWS-Redshift as well as AWS-EMR cluste
 Screenshot
 
 02_data_etl_dag
+
 This dag is responsible for the actual workloads / ETL tasks, executing both Spark-Submits on AWS-EMR and read/write operations to AWS-S3 as well as AWS-Redshift. The dag waits until both clusters are provisioned properly and triggers both ingestion of raw data as well as the creation of final fact and dimension tables.
 
 Custom operators update existing airflow connections with the current hosts of provisioned clusters on AWS.
@@ -138,6 +141,7 @@ elevation_ft	int	elevation in feet
 gps_code	varchar	gps code
 latitude	float	latitude coordinate of airport
 longitude	float	longitude coordinate of airport
+
 Dimension Date
 This table is solely created out of the staging_immigration table / data and is based on the arrival_date.
 
@@ -153,6 +157,7 @@ week	int	digit week of year
 day_of_year	int	digit day of year
 day_of_week	int	digit day of week
 quarter	int	quarter of year
+
 Dimension Port
 This table is solely created out of the provided dictionary i94_ports.txt.
 
@@ -160,12 +165,15 @@ Table Column	Data Type	Description
 id	varchar	3-character port code from mapping
 city	varchar	country name
 state_id	varchar	2-character state code from mapping
+
 Dimension Travel-Mode
+
 This table is solely created out of the provided dictionary i94_mode_types.txt.
 
 Table Column	Data Type	Description
 id	int	digit-code from mapping
 transport	varchar	type of travel
+
 Dimension Visa-Type
 This table is solely created out of the provided dictionary i94_visa_types.txt.
 
@@ -176,6 +184,7 @@ reason	varchar	type of visa
 Getting Started
 Get this repository ...
     git clone https://github.com/
+    
 Place your aws-key-file.pem into the config directory ...
 
 Adjust the Airflow Variables in config/airlfow_variables.json according to your needs & update the AWS S3-Bucket in scripts/bootstrap/bootstrap_emr.sh
@@ -191,6 +200,7 @@ Start Airflow init-db container to prepare the postgres ...
     docker-compose up airflow_initdb
 Start Airflow Webserver & Airflow Scheduler as container ...
     docker-compose up -d airflow_webserver airflow_scheduler
+    
 Access Airlfow-UI with localhost:8282 in your browser!
 
 You may change DAG-schedules and run the dags to set up your data-warehouse ...
@@ -216,6 +226,7 @@ performance as well as concurrency scaling. This can significantly boost query p
 utilizing the cluster. These features can also be applied to specific groups of users or workloads only.
 
 Known Issues
+
 The following issues can arise irregularly and are of unknown nature:
 
 EMR Cluster not started correctly because of AWS-Account restrictions. Please make sure that your Account-Quota does not exceeds any limits.
